@@ -12,4 +12,5 @@ public:
 	double casinoEndAmount;
 };
 
+
 #endif /* STATISTICS_KEEPER_H */

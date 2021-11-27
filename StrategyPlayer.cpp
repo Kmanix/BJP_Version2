@@ -4,7 +4,7 @@
 
 
 // Random strat ////////////////////////////////////////////////////////
-RandomPlayer::RandomPlayer(int in_ID, int in_Level)
+RandomPlayer::RandomPlayer(int in_ID, int in_Level) 
 	: Player(in_ID, in_Level)
 {
 }
@@ -25,7 +25,7 @@ bool RandomPlayer::Strategy(int Handscore)
 
 
 // Mimic Strat ////////////////////////////////////////////////////////
-MimicPlayer::MimicPlayer(int in_ID, int in_Level)
+MimicPlayer::MimicPlayer(int in_ID, int in_Level) 
 	: Player(in_ID, in_Level)
 {
 }
@@ -40,7 +40,7 @@ bool MimicPlayer::Strategy(int Handscore)
 
 
 // Safe strat ////////////////////////////////////////////////////////
-SafePlayer::SafePlayer(int in_ID, int in_Level)
+SafePlayer::SafePlayer(int in_ID, int in_Level) 
 	: Player(in_ID, in_Level)
 {
 }
@@ -55,7 +55,7 @@ bool SafePlayer::Strategy(int Handscore)
 
 
 // Custom Strat ////////////////////////////////////////////////////////
-CustomPlayer::CustomPlayer(int in_ID, int in_Level)
+CustomPlayer::CustomPlayer(int in_ID, int in_Level) 
 	: Player(in_ID, in_Level)
 {
 }
@@ -67,3 +67,4 @@ bool CustomPlayer::Strategy(int Handscore)
 	else
 		return false;
 }
+

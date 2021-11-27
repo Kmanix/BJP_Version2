@@ -12,14 +12,14 @@ Player::Player(int in_ID, int in_Level)
 
 	switch (Level)
 	{
-	case 0: StartCash = 2 * (rand() % (RED_MAX_BET - RED_MIN_BET)) + RED_MIN_BET;
-		break;
-	case 1: StartCash = 2 * (rand() % (GREEN_MAX_BET - GREEN_MIN_BET)) + GREEN_MIN_BET;
-		break;
-	case 2: StartCash = 2 * (rand() % (BLACK_MAX_BET - BLACK_MIN_BET)) + BLACK_MIN_BET;
-		break;
-	case 3: StartCash = 2 * (rand() % (BLUE_MAX_BET - BLUE_MIN_BET)) + BLUE_MIN_BET;
-		break;
+		case 0: StartCash = 2 * (rand() % (RED_MAX_BET - RED_MIN_BET)) + RED_MIN_BET;
+			break;
+		case 1: StartCash = 2 * (rand() % (GREEN_MAX_BET - GREEN_MIN_BET)) + GREEN_MIN_BET;
+			break;
+		case 2: StartCash = 2 * (rand() % (BLACK_MAX_BET - BLACK_MIN_BET)) + BLACK_MIN_BET;
+			break;
+		case 3: StartCash = 2 * (rand() % (BLUE_MAX_BET - BLUE_MIN_BET)) + BLUE_MIN_BET;
+			break;
 	}
 
 	CurrentCash = StartCash;
@@ -46,14 +46,14 @@ bool Player::QuittingBehaviour()
 {
 	switch (Level)
 	{
-	case 0: return RedLevelQuit();
-		break;
-	case 1: return GreenLevelQuit();
-		break;
-	case 2: return BlackLevelQuit();
-		break;
-	case 3: return BlueLevelQuit();
-		break;
+		case 0: return RedLevelQuit();
+				break;
+		case 1: return GreenLevelQuit();
+				break;
+		case 2: return BlackLevelQuit();
+				break;
+		case 3: return BlueLevelQuit();
+				break;
 	}
 	return false;
 }
@@ -148,3 +148,4 @@ void Player::PromotePlayer()
 		Level++;
 	}
 }
+

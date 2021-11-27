@@ -80,7 +80,7 @@ bool GameTable::CanTakeMorePlayer()
 {
 	if (TablePlayers.size() < maxPlayers)
 		return true;
-
+	
 	return false;
 }
 
@@ -105,7 +105,7 @@ void GameTable::PlayRound()
 		PlayingRound();
 
 		ResultsRound();
-
+		
 		// cleanup
 
 	}
@@ -161,7 +161,7 @@ void GameTable::ResultsRound()
 	for (auto& p : TablePlayers)
 	{
 		int playerScore = p->GetHandscore();
-
+		
 		if (playerScore > 21)
 		{
 			p->Lose();
@@ -194,3 +194,4 @@ Card GameTable::HitMe()
 {
 	return TableDeck->dealCard();
 }
+

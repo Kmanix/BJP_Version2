@@ -64,5 +64,6 @@ void Dealer::UpdateSalary()
 
 double Dealer::getSalary()
 {
-	return salary;
+	return salary; 
 }
+

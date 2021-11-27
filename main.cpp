@@ -9,8 +9,8 @@ int main()
 {
 	srand((unsigned int)time(NULL));
 
-	Casino myCasino;
-	/*
+	//Casino myCasino;
+
 	RandomPlayer* p = new RandomPlayer(0, 1);
 
 	p->addCard(Card(5, Hearts));
@@ -21,5 +21,6 @@ int main()
 	p->addCard(Card(1, Clubs));
 
 	cout << p->GetHandscore() << endl;
-	*/
+
 }
+

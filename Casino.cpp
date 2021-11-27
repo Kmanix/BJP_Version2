@@ -58,3 +58,4 @@ Casino::~Casino()
 	}
 	HallOfFame.clear();
 }
+

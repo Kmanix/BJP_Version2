@@ -31,14 +31,14 @@ void SystemController::sortPlayers()
 		int playerLevel = InitialPlayerBase.back()->PlayerLevel();
 		switch (playerLevel)
 		{
-		case L1: L1Q.push_back(InitialPlayerBase.back());
-			break;
-		case L2: L2Q.push_back(InitialPlayerBase.back());
-			break;
-		case L3: L3Q.push_back(InitialPlayerBase.back());
-			break;
-		case L4: L4Q.push_back(InitialPlayerBase.back());
-			break;
+			case L1: L1Q.push_back(InitialPlayerBase.back());
+				break;
+			case L2: L2Q.push_back(InitialPlayerBase.back());
+				break;
+			case L3: L3Q.push_back(InitialPlayerBase.back());
+				break;
+			case L4: L4Q.push_back(InitialPlayerBase.back());
+				break;
 		}
 		InitialPlayerBase.pop_back();
 	}
@@ -63,37 +63,37 @@ void SystemController::populateTables()
 			flag = false;
 			switch (table->TableLevel())
 			{
-			case L1:	if (L1Q.size() > 0)
-			{
-				table->AddPlayer(L1Q.back());
-				L1Q.pop_back();
-				flag = true;
-				break;
-			}
+				case L1:	if (L1Q.size() > 0)
+							{
+								table->AddPlayer(L1Q.back());
+								L1Q.pop_back();
+								flag = true;
+								break;
+							}
+					
+				case L2:	if (L2Q.size() > 0)
+							{
+								table->AddPlayer(L2Q.back());
+								L2Q.pop_back();
+								flag = true;
+								break;
+							}
 
-			case L2:	if (L2Q.size() > 0)
-			{
-				table->AddPlayer(L2Q.back());
-				L2Q.pop_back();
-				flag = true;
-				break;
-			}
+				case L3:	if (L3Q.size() > 0)
+							{
+								table->AddPlayer(L3Q.back());
+								L3Q.pop_back();
+								flag = true;
+								break;
+							}
 
-			case L3:	if (L3Q.size() > 0)
-			{
-				table->AddPlayer(L3Q.back());
-				L3Q.pop_back();
-				flag = true;
-				break;
-			}
-
-			case L4:	if (L4Q.size() > 0)
-			{
-				table->AddPlayer(L4Q.back());
-				L4Q.pop_back();
-				flag = true;
-				break;
-			}
+				case L4:	if (L4Q.size() > 0)
+							{
+								table->AddPlayer(L4Q.back());
+								L4Q.pop_back();
+								flag = true;
+								break;
+							}
 			}
 		}
 	}
@@ -137,3 +137,4 @@ void SystemController::EndSimulation()
 	// end the simulation
 	cout << endl << "Simulation has ended!" << endl;
 }
+

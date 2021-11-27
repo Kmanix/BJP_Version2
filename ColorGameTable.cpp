@@ -5,7 +5,7 @@
 
 
 // RED ////////////////////////////////
-RedTable::RedTable(int in_ID, int in_minPlayers, int in_maxPlayers, int in_minDecks, int in_maxDecks, int in_StartRatio, int in_refillRatio)
+RedTable::RedTable(int in_ID, int in_minPlayers, int in_maxPlayers, int in_minDecks, int in_maxDecks, int in_StartRatio, int in_refillRatio) 
 	: GameTable(in_ID, in_minPlayers, in_maxPlayers, in_minDecks, in_maxDecks, in_StartRatio, in_refillRatio)
 {
 	Level = Red;
@@ -21,7 +21,7 @@ RedTable::RedTable(int in_ID, int in_minPlayers, int in_maxPlayers, int in_minDe
 
 
 // GREEN ////////////////////////////////
-GreenTable::GreenTable(int in_ID, int in_minPlayers, int in_maxPlayers, int in_minDecks, int in_maxDecks, int in_StartRatio, int in_refillRatio)
+GreenTable::GreenTable(int in_ID, int in_minPlayers, int in_maxPlayers, int in_minDecks, int in_maxDecks, int in_StartRatio, int in_refillRatio) 
 	: GameTable(in_ID, in_minPlayers, in_maxPlayers, in_minDecks, in_maxDecks, in_StartRatio, in_refillRatio)
 {
 	Level = Green;
@@ -37,7 +37,7 @@ GreenTable::GreenTable(int in_ID, int in_minPlayers, int in_maxPlayers, int in_m
 
 
 // BLACK ////////////////////////////////
-BlackTable::BlackTable(int in_ID, int in_minPlayers, int in_maxPlayers, int in_minDecks, int in_maxDecks, int in_StartRatio, int in_refillRatio)
+BlackTable::BlackTable(int in_ID, int in_minPlayers, int in_maxPlayers, int in_minDecks, int in_maxDecks, int in_StartRatio, int in_refillRatio) 
 	: GameTable(in_ID, in_minPlayers, in_maxPlayers, in_minDecks, in_maxDecks, in_StartRatio, in_refillRatio)
 {
 	Level = Black;
@@ -53,7 +53,7 @@ BlackTable::BlackTable(int in_ID, int in_minPlayers, int in_maxPlayers, int in_m
 
 
 // BLUE ////////////////////////////////
-BlueTable::BlueTable(int in_ID, int in_minPlayers, int in_maxPlayers, int in_minDecks, int in_maxDecks, int in_StartRatio, int in_refillRatio)
+BlueTable::BlueTable(int in_ID, int in_minPlayers, int in_maxPlayers, int in_minDecks, int in_maxDecks, int in_StartRatio, int in_refillRatio) 
 	: GameTable(in_ID, in_minPlayers, in_maxPlayers, in_minDecks, in_maxDecks, in_StartRatio, in_refillRatio)
 {
 	Level = Blue;
@@ -66,3 +66,4 @@ BlueTable::BlueTable(int in_ID, int in_minPlayers, int in_maxPlayers, int in_min
 	TableCurrentCash = TableStartCash;
 	TableRefillAmount = (int)(TableStartCash * ((float)refillRatio / startRatio));
 }
+
