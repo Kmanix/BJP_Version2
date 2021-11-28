@@ -11,8 +11,10 @@ class SystemController
 {
 	enum Level
 	{
-		L1, L2, L3, L4
+		L1, L2, L3, L4, L5
 	};
+
+	long int& CashReserve;
 
 	TrafficGen* TrafficGenModule;
 
@@ -32,9 +34,15 @@ class SystemController
 
 	void populateTables();
 	void playRoundOnAllTables();
+	void refillTables();
+	void retireDealers();
+	void quitPlayers();
+	void retrieveAllPlayers();
+	int getActivePlayers();
+	bool endPlay();
 
 public:
-	SystemController(TrafficGen* TrafficGen, vector<Player*>& PlayerBase, vector<Dealer*>& Dealerbase, vector<GameTable*>& TableBase, vector<Player*> QuitPlayers, vector<Player*> HallOfFame);
+	SystemController(long int& CashReserve, TrafficGen* TrafficGen, vector<Player*>& PlayerBase, vector<Dealer*>& Dealerbase, vector<GameTable*>& TableBase, vector<Player*> QuitPlayers, vector<Player*> HallOfFame);
 
 	void Init();
 	void StartSimulation();

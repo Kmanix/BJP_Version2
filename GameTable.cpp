@@ -4,8 +4,8 @@
 #include "Dealer.h"
 
 
-GameTable::GameTable(int in_ID, int in_minPlayers, int in_maxPlayers, int in_minDecks, int in_maxDecks, int in_StartRatio, int in_refillRatio)
-	: TableID(in_ID), minPlayers(in_minPlayers), maxPlayers(in_maxPlayers), minDecks(in_minDecks), maxDecks(in_maxDecks), startRatio(in_StartRatio), refillRatio(in_refillRatio)
+GameTable::GameTable(int in_ID, int in_minPlayers, int in_maxPlayers, int in_minDecks, int in_maxDecks, int in_StartRatio, int in_refillRatio, int in_PromotionThreshold)
+	: TableID(in_ID), minPlayers(in_minPlayers), maxPlayers(in_maxPlayers), minDecks(in_minDecks), maxDecks(in_maxDecks), startRatio(in_StartRatio), refillRatio(in_refillRatio), PromotionThreshold(in_PromotionThreshold)
 {
 	Level = Red;
 
@@ -39,10 +39,20 @@ bool GameTable::AssignDealer(Dealer* in_dealer)
 }
 
 
+bool GameTable::DealerNeedsToRetire()
+{
+	if(TableDealer)
+		return TableDealer->QuittingBehaviour();
+
+	return false;
+}
+
+
 Dealer* GameTable::RemoveDealer()
 {
 	Dealer* retiredDealer = TableDealer;
 	TableDealer = nullptr;
+	retiredDealer->clearGameTable();
 	return retiredDealer;
 }
 
@@ -58,18 +68,15 @@ bool GameTable::AddPlayer(Player* in_player)
 }
 
 
-Player* GameTable::RemovePlayer()
-{
-	return nullptr;
-}
-
-
 bool GameTable::GameReadyToStart()
 {
 	if (TableDealer == nullptr)
 		return false;
 
 	if (TablePlayers.size() < minPlayers)
+		return false;
+
+	if (TableCurrentCash <= TableRefillAmount)
 		return false;
 
 	return true;
@@ -105,10 +112,30 @@ void GameTable::PlayRound()
 		PlayingRound();
 
 		ResultsRound();
-		
-		// cleanup
 
+		PlayerPromotions();
 	}
+}
+
+
+bool GameTable::needCashRefill()
+{
+	if (TableCurrentCash <= TableRefillAmount)
+		return true;
+	else
+		return false;
+}
+
+
+int GameTable::topUpAmount()
+{
+	return TableStartCash - TableCurrentCash;
+}
+
+
+void GameTable::depositCash(int amount)
+{
+	TableCurrentCash += amount;
 }
 
 
@@ -176,6 +203,18 @@ void GameTable::ResultsRound()
 		{
 			p->Win();
 			TableCurrentCash -= p->getWinAmount();
+		}
+	}
+}
+
+
+void GameTable::PlayerPromotions()
+{
+	for (auto& player : TablePlayers)
+	{
+		if (player->PlayerProfitLoss() >= PromotionThreshold)
+		{
+			player->PromotePlayer();
 		}
 	}
 }

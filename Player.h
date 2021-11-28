@@ -10,7 +10,7 @@ class Player : public BasePerson
 protected:
 	enum PlayerLevel
 	{
-		L1, L2, L3, L4
+		L1, L2, L3, L4, L5 // L5 is Hall of Fame
 	};
 
 	int Level;
@@ -36,7 +36,9 @@ public:
 	int getWinAmount() { return winAmount; }
 
 	int PlayerLevel() { return Level; }
+	int PlayerProfitLoss();
 	void PromotePlayer();
+
 
 };
 

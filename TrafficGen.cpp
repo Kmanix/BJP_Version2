@@ -192,25 +192,25 @@ void TrafficGen::CreateTables()
 	{
 		if (tokens > 0)
 		{
-			Tables.push_back(new RedTable((numTables-tokens), minNumPlayer, maxNumPlayer, minNumDeck, maxNumDeck, tableStartAmountRatio, tableRefillAmountRatio));
+			Tables.push_back(new RedTable((numTables-tokens), minNumPlayer, maxNumPlayer, minNumDeck, maxNumDeck, tableStartAmountRatio, tableRefillAmountRatio, transitionThreshold[L1]));
 			tokens--;
 		}
 
 		if (tokens > 0)
 		{
-			Tables.push_back(new GreenTable((numTables - tokens), minNumPlayer, maxNumPlayer, minNumDeck, maxNumDeck, tableStartAmountRatio, tableRefillAmountRatio));
+			Tables.push_back(new GreenTable((numTables - tokens), minNumPlayer, maxNumPlayer, minNumDeck, maxNumDeck, tableStartAmountRatio, tableRefillAmountRatio, transitionThreshold[L2]));
 			tokens--;
 		}
 
 		if (tokens > 0)
 		{
-			Tables.push_back(new BlackTable((numTables - tokens), minNumPlayer, maxNumPlayer, minNumDeck, maxNumDeck, tableStartAmountRatio, tableRefillAmountRatio));
+			Tables.push_back(new BlackTable((numTables - tokens), minNumPlayer, maxNumPlayer, minNumDeck, maxNumDeck, tableStartAmountRatio, tableRefillAmountRatio, transitionThreshold[L3]));
 			tokens--;
 		}
 
 		if (tokens > 0)
 		{
-			Tables.push_back(new BlueTable((numTables - tokens), minNumPlayer, maxNumPlayer, minNumDeck, maxNumDeck, tableStartAmountRatio, tableRefillAmountRatio));
+			Tables.push_back(new BlueTable((numTables - tokens), minNumPlayer, maxNumPlayer, minNumDeck, maxNumDeck, tableStartAmountRatio, tableRefillAmountRatio, transitionThreshold[L4]));
 			tokens--;
 		}
 	}

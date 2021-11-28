@@ -119,3 +119,4 @@ int BasePerson::ProfitLoss()
 	return StartCash - CurrentCash;
 }
 
+

@@ -1,8 +1,8 @@
 #include "SystemController.h"
 
 
-SystemController::SystemController(TrafficGen* tg, vector<Player*>& pb, vector<Dealer*>& db, vector<GameTable*>& tb, vector<Player*> qp, vector<Player*> hf)
-	: TrafficGenModule(tg), InitialPlayerBase(pb), DealerBase(db), Tables(tb), QuitPlayers(qp), HallOfFame(hf)
+SystemController::SystemController(long int& cr, TrafficGen* tg, vector<Player*>& pb, vector<Dealer*>& db, vector<GameTable*>& tb, vector<Player*> qp, vector<Player*> hf)
+	: CashReserve(cr), TrafficGenModule(tg), InitialPlayerBase(pb), DealerBase(db), Tables(tb), QuitPlayers(qp), HallOfFame(hf)
 {
 	// intialize the system
 	Init();
@@ -109,6 +109,105 @@ void SystemController::playRoundOnAllTables()
 }
 
 
+void SystemController::refillTables()
+{
+	for (auto& table : Tables)
+	{
+		if (table->needCashRefill())
+		{
+			int amount = table->topUpAmount();
+			if ((CashReserve - amount) >= 0)
+			{
+				CashReserve -= amount;
+				table->depositCash(amount);
+			}
+		}
+	}
+}
+
+
+void SystemController::retireDealers()
+{
+	for (auto& table : Tables)
+	{
+		if (table->DealerNeedsToRetire())
+		{
+			DealerBase.insert(DealerBase.begin(), table->RemoveDealer());
+		}
+	}
+}
+
+
+void SystemController::quitPlayers()
+{
+	for (auto& table : Tables)
+	{
+		vector<Player*>& TablePlayers = table->GetPlayersOnTable();
+		for (auto& player : TablePlayers)
+		{
+			if (player->QuittingBehaviour())
+			{
+				QuitPlayers.push_back(player);
+				remove(TablePlayers.begin(), TablePlayers.end(), player);
+			}
+		}
+	}
+}
+
+
+void SystemController::retrieveAllPlayers()
+{
+	for (auto& table : Tables)
+	{
+		vector<Player*>& TablePlayers = table->GetPlayersOnTable();
+		for (auto& player : TablePlayers)
+		{
+			switch (player->PlayerLevel())
+			{
+				case L1:	L1Q.push_back(player);
+							remove(TablePlayers.begin(), TablePlayers.end(), player);
+							break;
+
+				case L2:	L2Q.push_back(player);
+							remove(TablePlayers.begin(), TablePlayers.end(), player);
+							break;
+
+				case L3:	L3Q.push_back(player);
+							remove(TablePlayers.begin(), TablePlayers.end(), player);
+							break;
+
+				case L4:	L4Q.push_back(player);
+							remove(TablePlayers.begin(), TablePlayers.end(), player);
+							break;
+
+				case L5:	HallOfFame.push_back(player);
+							remove(TablePlayers.begin(), TablePlayers.end(), player);
+							break;
+			}
+		}
+	}
+}
+
+
+int SystemController::getActivePlayers()
+{
+	int activePlayers = L1Q.size() + L2Q.size() + L3Q.size() + L4Q.size();
+	return activePlayers;
+}
+
+
+bool SystemController::endPlay()
+{
+	if (CashReserve < CASINO_BROKE_CASH)
+		return true;
+
+	if (getActivePlayers() < MIN_PLAYERS)
+		return true;
+
+	return false;
+}
+
+
 void SystemController::StartSimulation()
 {
 	// start the simulation
@@ -117,15 +216,21 @@ void SystemController::StartSimulation()
 	// loop till end of player list, end of casino money, or not enough players
 	while (true)
 	{
+		// game setup
 		populateTables();
 
+		// game
 		playRoundOnAllTables();
 
-		// promote players
+		// cleanup
+		refillTables();
+		retireDealers();
+		quitPlayers();
+		retrieveAllPlayers();
 
-		// remove players
-
-		// retire dealers
+		// end play
+		if (endPlay())
+			break;
 	}
 
 	EndSimulation();

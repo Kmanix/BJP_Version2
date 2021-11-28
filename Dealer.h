@@ -20,8 +20,9 @@ public:
 	bool Strategy(int) override;
 
 	void UpdateSalary();
-	double getSalary();
+	int getSalary();
 };
 
 
 #endif /* DEALER_H */
+

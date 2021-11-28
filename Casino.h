@@ -27,6 +27,8 @@ private:
 	vector<Player*> QuitPlayers;
 	vector<Player*> HallOfFame;
 
+	long int CashReserve;
+
 public:
 	Casino();
 	~Casino();

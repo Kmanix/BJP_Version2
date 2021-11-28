@@ -62,8 +62,9 @@ void Dealer::UpdateSalary()
 }
 
 
-double Dealer::getSalary()
+int Dealer::getSalary()
 {
 	return salary; 
 }
+
 

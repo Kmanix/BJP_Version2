@@ -3,9 +3,11 @@
 
 Casino::Casino()
 {
+	CashReserve = CASINO_CASH; // numeric separator c++ 14 onwards
+
 	TraffGen = new TrafficGen(InitialPlayerBase, DealerBase, Tables);
 	SK = new StatKeeper();
-	SysCon = new SystemController(TraffGen, InitialPlayerBase, DealerBase, Tables, QuitPlayers, HallOfFame);
+	SysCon = new SystemController(CashReserve, TraffGen, InitialPlayerBase, DealerBase, Tables, QuitPlayers, HallOfFame);
 }
 
 

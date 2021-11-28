@@ -9,7 +9,7 @@
 class RedTable : public GameTable
 {
 public:
-	RedTable(int in_ID, int in_minPlayers, int in_maxPlayers, int in_minDecks, int in_maxDecks, int in_StartRatio, int in_refillRatio);
+	RedTable(int in_ID, int in_minPlayers, int in_maxPlayers, int in_minDecks, int in_maxDecks, int in_StartRatio, int in_refillRatio, int PromotionThreshold);
 };
 
 
@@ -17,7 +17,7 @@ public:
 class GreenTable : public GameTable
 {
 public:
-	GreenTable(int in_ID, int in_minPlayers, int in_maxPlayers, int in_minDecks, int in_maxDecks, int in_StartRatio, int in_refillRatio);
+	GreenTable(int in_ID, int in_minPlayers, int in_maxPlayers, int in_minDecks, int in_maxDecks, int in_StartRatio, int in_refillRatio, int PromotionThreshold);
 };
 
 
@@ -25,7 +25,7 @@ public:
 class BlackTable : public GameTable
 {
 public:
-	BlackTable(int in_ID, int in_minPlayers, int in_maxPlayers, int in_minDecks, int in_maxDecks, int in_StartRatio, int in_refillRatio);
+	BlackTable(int in_ID, int in_minPlayers, int in_maxPlayers, int in_minDecks, int in_maxDecks, int in_StartRatio, int in_refillRatio, int PromotionThreshold);
 };
 
 
@@ -33,7 +33,7 @@ public:
 class BlueTable : public GameTable
 {
 public:
-	BlueTable(int in_ID, int in_minPlayers, int in_maxPlayers, int in_minDecks, int in_maxDecks, int in_StartRatio, int in_refillRatio);
+	BlueTable(int in_ID, int in_minPlayers, int in_maxPlayers, int in_minDecks, int in_maxDecks, int in_StartRatio, int in_refillRatio, int PromotionThreshold);
 };
 
 

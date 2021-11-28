@@ -42,6 +42,8 @@ protected:
 	int TableCurrentCash;
 	int TableRefillAmount;
 
+	int PromotionThreshold;
+
 	Dealer* TableDealer;
 	vector<Player*> TablePlayers;
 	Deck* TableDeck;
@@ -51,15 +53,18 @@ protected:
 	void PlayingRound();
 	void ResultsRound();
 
+	void PlayerPromotions();
+
 public:
-	GameTable(int in_ID, int in_minPlayers, int in_maxPlayers, int in_minDecks, int in_maxDecks, int startRatio, int refillRatio);
+	GameTable(int in_ID, int in_minPlayers, int in_maxPlayers, int in_minDecks, int in_maxDecks, int startRatio, int refillRatio, int PromotionThreshold);
 	~GameTable();
 
 	bool AssignDealer(Dealer* in_dealer);
+	bool DealerNeedsToRetire();
 	Dealer* RemoveDealer();
 
 	bool AddPlayer(Player* in_player);
-	Player* RemovePlayer();
+	vector<Player*>& GetPlayersOnTable() { return TablePlayers; }
 
 	bool GameReadyToStart();
 	bool CanTakeMorePlayer();
@@ -70,6 +75,10 @@ public:
 
 	void PlayRound();
 	int TableLevel() { return Level; }
+
+	bool needCashRefill();
+	int topUpAmount();
+	void depositCash(int amount);
 
 };
 

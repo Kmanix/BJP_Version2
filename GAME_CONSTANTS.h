@@ -1,12 +1,17 @@
 #ifndef GAME_CONSTANTS_H
 #define GAME_CONSTANTS_H
 
+#include <string>
+
+using std::string;
+
+
 // number of games playable
 constexpr int ROUND_LIMIT = 40;
 
 
 // input file
-const std::string USER_INPUT_FILE = "test_input.txt";
+const string USER_INPUT_FILE = "test_input.txt";
 
 
 // Table bet amounts
@@ -25,5 +30,13 @@ constexpr int BLACK_BET_MULTIPLE = 10;
 constexpr int BLUE_MIN_BET = 500;
 constexpr int BLUE_MAX_BET = 1000;
 constexpr int BLUE_BET_MULTIPLE = 10;
+
+
+// casino
+const long int CASINO_CASH = 10'000'000;
+
+const int MIN_PLAYERS = 4;
+const long int CASINO_BROKE_CASH = MIN_PLAYERS * (RED_MAX_BET + GREEN_MAX_BET + BLACK_MAX_BET + BLUE_MAX_BET);
+
 
 #endif

@@ -68,3 +68,4 @@ bool CustomPlayer::Strategy(int Handscore)
 		return false;
 }
 
+

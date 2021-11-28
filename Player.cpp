@@ -44,6 +44,9 @@ int Player::Bet()
 
 bool Player::QuittingBehaviour()
 {
+	if (CurrentCash <= 0)
+		return true;
+
 	switch (Level)
 	{
 		case 0: return RedLevelQuit();
@@ -141,9 +144,15 @@ void Player::Lose()
 }
 
 
+int Player::PlayerProfitLoss()
+{
+	return CurrentCash - StartCash;
+}
+
+
 void Player::PromotePlayer()
 {
-	if (Level < L4)
+	if (Level < L5)
 	{
 		Level++;
 	}
