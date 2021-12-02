@@ -103,6 +103,10 @@ void TrafficGen::LoadInputFile(string filename)
 
 		cout << "Loading user input file status: DONE." << endl;
 		infile.close();
+
+		//// reconfigure globals after reading in file
+		//MIN_PLAYERS = minNumPlayer;
+		//CASINO_BROKE_CASH = MIN_PLAYERS * (RED_MAX_BET + GREEN_MAX_BET + BLACK_MAX_BET + BLUE_MAX_BET);
 	}
 	else
 	{

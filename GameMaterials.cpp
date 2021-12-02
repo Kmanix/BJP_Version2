@@ -9,13 +9,13 @@ Card::Card(int in_rank, char in_suit)
 }
 
 
-int Card::getRank()
+int Card::GetRank()
 {
 	return rank;
 }
 
 
-char Card::getSuit()
+char Card::GetSuit()
 {
 	return suit;
 }
@@ -28,7 +28,7 @@ Deck::Deck(int quantity)
 	{
 		for (int i = 0; i < quantity; i++)
 		{
-			addDeck();
+			AddOneDeck();
 		}
 	}
 
@@ -36,7 +36,7 @@ Deck::Deck(int quantity)
 }
 
 
-Card Deck::dealCard()
+Card Deck::DealOneCard()
 {
 	Card c = CardDeck.back();
 	CardDeck.pop_back();
@@ -46,7 +46,7 @@ Card Deck::dealCard()
 
 int Deck::DeckSize()
 {
-	return CardDeck.size();
+	return (int)CardDeck.size();
 }
 
 
@@ -56,7 +56,7 @@ void Deck::DeckShuffle()
 }
 
 
-void Deck::addDeck()
+void Deck::AddOneDeck()
 {
 	// add normal card of each suit
 	for (int i = 2; i < 11; i++)
@@ -82,5 +82,4 @@ void Deck::addDeck()
 	CardDeck.push_back(Card(1, Clubs));
 	CardDeck.push_back(Card(1, Spades));
 }
-
 

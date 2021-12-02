@@ -13,21 +13,23 @@
 #include "GameTable.h"
 
 
+
 class Casino
 {
 private:
-	SystemController* SysCon;
-	TrafficGen* TraffGen;
-	StatKeeper* SK;
+	SystemController* sysCon;
+	TrafficGen* trafficGenModule;
+	StatKeeper* statModule;
 
-	vector<Player*> InitialPlayerBase;
-	vector<Dealer*> DealerBase;
-	vector<GameTable*> Tables;
+	vector<Player*> initialPlayerBase;
+	vector<Dealer*> dealerBase;
+	vector<GameTable*> casinoTables;
 
-	vector<Player*> QuitPlayers;
-	vector<Player*> HallOfFame;
+	vector<Player*> quitPlayers;
+	vector<Player*> hallOfFame;
 
-	long int CashReserve;
+	long int cashReserve;
+	long int casinoStartCash;
 
 public:
 	Casino();

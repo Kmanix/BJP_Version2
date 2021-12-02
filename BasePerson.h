@@ -4,6 +4,7 @@
 
 #include <iostream>
 #include <vector>
+#include <string>
 
 #include "GAME_CONSTANTS.h"
 #include "GameMaterials.h"
@@ -12,6 +13,8 @@ using std::cout;
 using std::cin;
 using std::endl;
 using std::vector;
+using std::string;
+using std::to_string;
 
 
 // forward declaration
@@ -21,18 +24,15 @@ class GameTable;
 class BasePerson
 {
 protected:
-	int ID;
-	int TableNumber;
+	int personID;
+	int tableNumber;
 
-	int StartCash;
-	int CurrentCash;
+	int roundLimit;
+	int roundsPlayed;
 
-	int RoundLimit;
-	int RoundsPlayed;
-
-	vector<char> TrackRecord;
+	vector<char> trackRecord;
 	GameTable* assignedTable;
-	vector<Card> hand;
+	vector<Card> playHand;
 
 public:
 	BasePerson(int in_ID);
@@ -44,19 +44,20 @@ public:
 	virtual bool Play(int Handscore);
 	virtual void Win();
 	virtual void Lose();
+	virtual void Draw();
 
-	GameTable* getGameTable();
-	void setGameTable(GameTable* in_table);
-	void clearGameTable();
+	GameTable* GetAssignedGameTable();
+	void SetAssignedGameTable(GameTable* in_table);
+	void ClearAssignedGameTable();
 
-	void addCard(Card c);
+	void AddCard(Card c);
 	int GetHandscore();
-	void resetHand();
+	void ResetPlayHand();
 
-	int ProfitLoss();
+	string GetPlayHandAsString();
+
 };
 
 
 #endif /* BASE_PERSON_H */
-
 

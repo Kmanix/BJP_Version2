@@ -6,9 +6,9 @@
 // constructor
 Dealer::Dealer(int in_ID, int in_sal, int in_thres) : BasePerson(in_ID)
 {
-	salary = 0;
-	salary_rate = in_sal;
-	threshold = in_thres;
+	dealerSalary = 0;
+	salaryRate = in_sal;
+	lossThreshold = in_thres;
 }
 
 
@@ -25,7 +25,7 @@ bool Dealer::QuittingBehaviour()
 
 	// calculate wins and losses
 	int wins = 0, losses = 0;
-	for (char& c : TrackRecord)
+	for (char& c : trackRecord)
 	{
 		if (c == 'W')
 			wins++;
@@ -34,10 +34,10 @@ bool Dealer::QuittingBehaviour()
 	}
 
 	// determine if they retire or not
-	if (TrackRecord.size() > 0)
+	if (trackRecord.size() > 0)
 	{
-		double win_percent = (double)wins / TrackRecord.size() * 100;
-		if (win_percent <= threshold)
+		double win_percent = (double)wins / trackRecord.size() * 100;
+		if (win_percent <= lossThreshold)
 		{
 			return true;
 		}
@@ -58,13 +58,12 @@ bool Dealer::Strategy(int HandScore)
 
 void Dealer::UpdateSalary()
 {
-	salary = TrackRecord.size() * salary_rate;
+	dealerSalary = (int)trackRecord.size() * salaryRate;
 }
 
 
-int Dealer::getSalary()
+double Dealer::GetSalary()
 {
-	return salary; 
+	return dealerSalary; 
 }
-
 

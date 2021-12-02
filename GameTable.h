@@ -1,12 +1,14 @@
 #ifndef GAME_TABLE_H
 #define GAME_TABLE_H
 
-
+#include <fstream>
 #include <vector>
 
 #include "GameMaterials.h"
 #include "GAME_CONSTANTS.h"
+#include "StatKeeper.h"
 
+using std::ofstream;
 
 // forward declarations
 class Player;
@@ -22,38 +24,45 @@ protected:
 		Red, Green, Black, Blue
 	};
 
-	TableLevel Level;
+	TableLevel tableLevel;
 
-	int TableID;
+	int tableID;
 
 	int minBet;
 	int maxBet;
 	int betMultiple;
 
-	int minPlayers;
-	int maxPlayers;
+	int tableMinPlayers;
+	int tableMaxPlayers;
 
-	int minDecks;
-	int maxDecks;
+	int tableMinDecks;
+	int tableMaxDecks;
 
-	int startRatio;
-	int refillRatio;
-	int TableStartCash;
-	int TableCurrentCash;
-	int TableRefillAmount;
+	int cashStartRatio;
+	int cashRefillRatio;
+	int tableStartCash;
+	int tableCurrentCash;
+	int tableRefillAmount;
 
-	int PromotionThreshold;
+	int playerPromotionThreshold;
 
-	Dealer* TableDealer;
-	vector<Player*> TablePlayers;
-	Deck* TableDeck;
+	Dealer* tableAssignedDealer;
+	vector<Player*> tableAssignedPlayers;
+	Deck* tableCardsDeck;
+
+	ofstream outfile;
 
 	void BettingRound();
 	void DealingRound();
 	void PlayingRound();
-	void ResultsRound();
+	void ResultsRound(StatKeeper* statModule);
+	void PlayerLoseLogistics(StatKeeper* statModule, Player* player);
+	void PlayerWinLogistics(StatKeeper* statModule, Player* player);
+	void PlayerDrawLogistics(StatKeeper* statModule, Player* player);
+	void PrintHands();
 
 	void PlayerPromotions();
+	void CleanUp();
 
 public:
 	GameTable(int in_ID, int in_minPlayers, int in_maxPlayers, int in_minDecks, int in_maxDecks, int startRatio, int refillRatio, int PromotionThreshold);
@@ -64,7 +73,7 @@ public:
 	Dealer* RemoveDealer();
 
 	bool AddPlayer(Player* in_player);
-	vector<Player*>& GetPlayersOnTable() { return TablePlayers; }
+	vector<Player*>& GetPlayersOnTable() { return tableAssignedPlayers; }
 
 	bool GameReadyToStart();
 	bool CanTakeMorePlayer();
@@ -73,12 +82,15 @@ public:
 	Card HitMe();
 	int PlaceBet();
 
-	void PlayRound();
-	int TableLevel() { return Level; }
+	void PlayRound(StatKeeper* statModule);
+	int TableLevel() { return (int)tableLevel; }
+	int TableMinPlayers() { return tableMinPlayers; }
 
-	bool needCashRefill();
-	int topUpAmount();
-	void depositCash(int amount);
+	bool NeedCashRefill();
+	int TopUpAmount();
+	void DepositCash(int amount);
+
+	int GetCurrentCash() { return tableCurrentCash; }
 
 };
 

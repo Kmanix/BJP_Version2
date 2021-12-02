@@ -11,7 +11,13 @@ constexpr int ROUND_LIMIT = 40;
 
 
 // input file
-const string USER_INPUT_FILE = "test_input.txt";
+//const string USER_INPUT_FILE = "test_input.txt";
+const string USER_INPUT_FILE = "user_input.txt";
+//const string USER_INPUT_FILE = "small_test_input.txt";
+
+// output files
+const string ROUND_OUTPUT_FILE = "round_output.txt";
+const string STAT_OUTPUT_FILE = "stat_output.txt";
 
 
 // Table bet amounts
@@ -33,9 +39,10 @@ constexpr int BLUE_BET_MULTIPLE = 10;
 
 
 // casino
+const int MAX_ROUNDS = 500;
 const long int CASINO_CASH = 10'000'000;
 
-const int MIN_PLAYERS = 4;
+const int MIN_PLAYERS = 2;
 const long int CASINO_BROKE_CASH = MIN_PLAYERS * (RED_MAX_BET + GREEN_MAX_BET + BLACK_MAX_BET + BLUE_MAX_BET);
 
 

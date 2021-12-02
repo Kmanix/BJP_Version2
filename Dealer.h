@@ -8,9 +8,9 @@
 class Dealer : public BasePerson
 {
 private:
-	int salary;
-	int salary_rate;
-	int threshold;
+	int dealerSalary;
+	int salaryRate;
+	int lossThreshold;
 
 public:
 	Dealer(int ID, int salaryRate, int winThreshol);
@@ -20,9 +20,10 @@ public:
 	bool Strategy(int) override;
 
 	void UpdateSalary();
-	int getSalary();
+	double GetSalary();
+
+
 };
 
 
 #endif /* DEALER_H */
-

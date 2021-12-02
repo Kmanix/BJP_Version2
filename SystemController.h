@@ -4,6 +4,7 @@
 #include <vector>
 
 #include "TrafficGen.h"
+#include "StatKeeper.h"
 #include "GAME_CONSTANTS.h"
 
 
@@ -14,35 +15,37 @@ class SystemController
 		L1, L2, L3, L4, L5
 	};
 
-	long int& CashReserve;
+	long int& cashReserve;
 
-	TrafficGen* TrafficGenModule;
+	TrafficGen* trafficGenModule;
+	StatKeeper* statModule;
 
-	vector<Player*>& InitialPlayerBase; // used as player queue
-	vector<Dealer*>& DealerBase; // used as dealer queue/lounge
-	vector<GameTable*>& Tables;
+	vector<Player*>& initialPlayerBase; // used as player queue
+	vector<Dealer*>& dealerBase; // used as dealer queue/lounge
+	vector<GameTable*>& casinoTables;
 
-	vector<Player*>& QuitPlayers;
-	vector<Player*>& HallOfFame;
+	vector<Player*>& quitPlayers;
+	vector<Player*>& hallOfFame;
 
-	vector<Player*> L1Q;
-	vector<Player*> L2Q;
-	vector<Player*> L3Q;
-	vector<Player*> L4Q;
+	vector<Player*> level1Q;
+	vector<Player*> level2Q;
+	vector<Player*> level3Q;
+	vector<Player*> level4Q;
 
-	void sortPlayers();
+	void SortPlayers();
 
-	void populateTables();
-	void playRoundOnAllTables();
-	void refillTables();
-	void retireDealers();
-	void quitPlayers();
-	void retrieveAllPlayers();
-	int getActivePlayers();
-	bool endPlay();
+	void PopulateTables();
+	void PlayRoundOnAllTables();
+	void RefillTables();
+	void RetireDealers();
+	void RetirePlayers();
+	void RetrieveAllPlayers();
+	int MinPlayersRequirement();
+	bool EndPlay();
 
 public:
-	SystemController(long int& CashReserve, TrafficGen* TrafficGen, vector<Player*>& PlayerBase, vector<Dealer*>& Dealerbase, vector<GameTable*>& TableBase, vector<Player*> QuitPlayers, vector<Player*> HallOfFame);
+	SystemController(long int& CashReserve, TrafficGen* TrafficGen, StatKeeper* statModule, vector<Player*>& PlayerBase, vector<Dealer*>& Dealerbase, vector<GameTable*>& TableBase, vector<Player*> QuitPlayers, vector<Player*> HallOfFame);
+	~SystemController();
 
 	void Init();
 	void StartSimulation();

@@ -1,11 +1,39 @@
 #include "SystemController.h"
 
 
-SystemController::SystemController(long int& cr, TrafficGen* tg, vector<Player*>& pb, vector<Dealer*>& db, vector<GameTable*>& tb, vector<Player*> qp, vector<Player*> hf)
-	: CashReserve(cr), TrafficGenModule(tg), InitialPlayerBase(pb), DealerBase(db), Tables(tb), QuitPlayers(qp), HallOfFame(hf)
+SystemController::SystemController(long int& cr, TrafficGen* tg, StatKeeper* sm, vector<Player*>& pb, vector<Dealer*>& db, vector<GameTable*>& tb, vector<Player*> qp, vector<Player*> hf)
+	: cashReserve(cr), trafficGenModule(tg), statModule(sm), initialPlayerBase(pb), dealerBase(db), casinoTables(tb), quitPlayers(qp), hallOfFame(hf)
 {
 	// intialize the system
 	Init();
+}
+
+SystemController::~SystemController()
+{
+	// delete player objects
+	for (int i = 0; i < level1Q.size(); i++)
+	{
+		delete level1Q[i];
+	}
+	level1Q.clear();
+
+	for (int i = 0; i < level2Q.size(); i++)
+	{
+		delete level2Q[i];
+	}
+	level2Q.clear();
+
+	for (int i = 0; i < level3Q.size(); i++)
+	{
+		delete level3Q[i];
+	}
+	level3Q.clear();
+
+	for (int i = 0; i < level4Q.size(); i++)
+	{
+		delete level4Q[i];
+	}
+	level4Q.clear();
 }
 
 
@@ -14,46 +42,50 @@ void SystemController::Init()
 	cout << "System Controller Initializing..." << endl;
 
 	// intialize the traffic gen module
-	TrafficGenModule->Init(USER_INPUT_FILE);
+	trafficGenModule->Init(USER_INPUT_FILE);
 
 	// sort the players by levels
-	sortPlayers();
+	SortPlayers();
+
+	// stat keeping
+	statModule->SetCasinoStartAmount(cashReserve);
 
 	// begin simulation
 	StartSimulation();
 }
 
 
-void SystemController::sortPlayers()
+void SystemController::SortPlayers()
 {
-	while (InitialPlayerBase.size() > 0)
+	while (initialPlayerBase.size() > 0)
 	{
-		int playerLevel = InitialPlayerBase.back()->PlayerLevel();
+		int playerLevel = initialPlayerBase.back()->PlayerLevel();
 		switch (playerLevel)
 		{
-			case L1: L1Q.push_back(InitialPlayerBase.back());
+			case L1: level1Q.push_back(initialPlayerBase.back());
 				break;
-			case L2: L2Q.push_back(InitialPlayerBase.back());
+			case L2: level2Q.push_back(initialPlayerBase.back());
 				break;
-			case L3: L3Q.push_back(InitialPlayerBase.back());
+			case L3: level3Q.push_back(initialPlayerBase.back());
 				break;
-			case L4: L4Q.push_back(InitialPlayerBase.back());
+			case L4: level4Q.push_back(initialPlayerBase.back());
 				break;
 		}
-		InitialPlayerBase.pop_back();
+		initialPlayerBase.pop_back();
 	}
 }
 
 
-void SystemController::populateTables()
+void SystemController::PopulateTables()
 {
-	for (auto& table : Tables)
+	for (auto& table : casinoTables)
 	{
 		// assign dealers
-		if (table->CanTakeADealer() && DealerBase.size() > 0)
+		if (table->CanTakeADealer() && dealerBase.size() > 0)
 		{
-			table->AssignDealer(DealerBase.back());
-			DealerBase.pop_back();
+			table->AssignDealer(dealerBase.back());
+			dealerBase.back()->SetAssignedGameTable(table);
+			dealerBase.pop_back();
 		}
 
 		// assign players
@@ -63,145 +95,183 @@ void SystemController::populateTables()
 			flag = false;
 			switch (table->TableLevel())
 			{
-				case L1:	if (L1Q.size() > 0)
+				case L1:	if (level1Q.size() > 0)
 							{
-								table->AddPlayer(L1Q.back());
-								L1Q.pop_back();
+								table->AddPlayer(level1Q.back());
+								level1Q.back()->SetAssignedGameTable(table);
+								level1Q.pop_back();
 								flag = true;
-								break;
 							}
+							break;
 					
-				case L2:	if (L2Q.size() > 0)
+				case L2:	if (level2Q.size() > 0)
 							{
-								table->AddPlayer(L2Q.back());
-								L2Q.pop_back();
+								table->AddPlayer(level2Q.back());
+								level2Q.back()->SetAssignedGameTable(table);
+								level2Q.pop_back();
 								flag = true;
-								break;
 							}
+							break;
 
-				case L3:	if (L3Q.size() > 0)
+				case L3:	if (level3Q.size() > 0)
 							{
-								table->AddPlayer(L3Q.back());
-								L3Q.pop_back();
-								flag = true;
-								break;
+								table->AddPlayer(level3Q.back());
+								level3Q.back()->SetAssignedGameTable(table);
+								level3Q.pop_back();
+								flag = true;	
 							}
+							break;
 
-				case L4:	if (L4Q.size() > 0)
+				case L4:	if (level4Q.size() > 0)
 							{
-								table->AddPlayer(L4Q.back());
-								L4Q.pop_back();
+								table->AddPlayer(level4Q.back());
+								level4Q.back()->SetAssignedGameTable(table);
+								level4Q.pop_back();
 								flag = true;
-								break;
 							}
+							break;
 			}
 		}
 	}
 }
 
 
-void SystemController::playRoundOnAllTables()
+void SystemController::PlayRoundOnAllTables()
 {
-	for (auto& table : Tables)
+	for (auto& table : casinoTables)
 	{
-		table->PlayRound();
+		table->PlayRound(statModule);
 	}
 }
 
 
-void SystemController::refillTables()
+void SystemController::RefillTables()
 {
-	for (auto& table : Tables)
+	for (auto& table : casinoTables)
 	{
-		if (table->needCashRefill())
+		if (table->NeedCashRefill())
 		{
-			int amount = table->topUpAmount();
-			if ((CashReserve - amount) >= 0)
+			int amount = table->TopUpAmount();
+			if ((cashReserve - amount) >= 0)
 			{
-				CashReserve -= amount;
-				table->depositCash(amount);
+				cashReserve -= amount;
+				table->DepositCash(amount);
+				statModule->DeductCasinoCash(amount);
 			}
 		}
 	}
 }
 
 
-void SystemController::retireDealers()
+void SystemController::RetireDealers()
 {
-	for (auto& table : Tables)
+	for (auto& table : casinoTables)
 	{
 		if (table->DealerNeedsToRetire())
 		{
-			DealerBase.insert(DealerBase.begin(), table->RemoveDealer());
+			Dealer* retiredDealer = table->RemoveDealer();
+			retiredDealer->ClearAssignedGameTable();
+			dealerBase.insert(dealerBase.begin(), retiredDealer);
 		}
 	}
 }
 
 
-void SystemController::quitPlayers()
+void SystemController::RetirePlayers()
 {
-	for (auto& table : Tables)
+	for (auto& table : casinoTables)
 	{
 		vector<Player*>& TablePlayers = table->GetPlayersOnTable();
 		for (auto& player : TablePlayers)
 		{
 			if (player->QuittingBehaviour())
 			{
-				QuitPlayers.push_back(player);
-				remove(TablePlayers.begin(), TablePlayers.end(), player);
+				quitPlayers.push_back(player);
+				player->SetQuit();
+				player->ClearAssignedGameTable();
 			}
 		}
 	}
 }
 
 
-void SystemController::retrieveAllPlayers()
+void SystemController::RetrieveAllPlayers()
 {
-	for (auto& table : Tables)
+	for (auto& table : casinoTables)
 	{
 		vector<Player*>& TablePlayers = table->GetPlayersOnTable();
 		for (auto& player : TablePlayers)
 		{
 			switch (player->PlayerLevel())
 			{
-				case L1:	L1Q.push_back(player);
-							remove(TablePlayers.begin(), TablePlayers.end(), player);
+				case L1:	if(!player->HasPlayerQuit())
+								level1Q.push_back(player);
 							break;
 
-				case L2:	L2Q.push_back(player);
-							remove(TablePlayers.begin(), TablePlayers.end(), player);
+				case L2:	if (!player->HasPlayerQuit())
+								level2Q.push_back(player);
 							break;
 
-				case L3:	L3Q.push_back(player);
-							remove(TablePlayers.begin(), TablePlayers.end(), player);
+				case L3:	if (!player->HasPlayerQuit())
+								level3Q.push_back(player);
 							break;
 
-				case L4:	L4Q.push_back(player);
-							remove(TablePlayers.begin(), TablePlayers.end(), player);
+				case L4:	if (!player->HasPlayerQuit())
+								level4Q.push_back(player);
 							break;
 
-				case L5:	HallOfFame.push_back(player);
-							remove(TablePlayers.begin(), TablePlayers.end(), player);
+				case L5:	if (!player->HasPlayerQuit())
+								hallOfFame.push_back(player);
 							break;
 			}
+			player->ClearAssignedGameTable();
 		}
+		TablePlayers.clear();
 	}
 }
 
 
-int SystemController::getActivePlayers()
+int SystemController::MinPlayersRequirement()
 {
-	int activePlayers = L1Q.size() + L2Q.size() + L3Q.size() + L4Q.size();
-	return activePlayers;
+	
+	enum TableLevel
+	{
+		Red, Green, Black, Blue
+	};
+
+	int playableFlag = false;
+	for (auto& table : casinoTables)
+	{
+		switch (table->TableLevel())
+		{
+			case Red:	if (level1Q.size() >= table->TableMinPlayers())
+							playableFlag = true;
+						break;
+
+			case Green:	if (level2Q.size() >= table->TableMinPlayers())
+							playableFlag = true;
+						break;
+
+			case Black:	if (level3Q.size() >= table->TableMinPlayers())
+							playableFlag = true;
+						break;
+
+			case Blue:	if (level4Q.size() >= table->TableMinPlayers())
+							playableFlag = true;
+						break;
+		}
+	}
+
+	return playableFlag;
 }
 
 
-bool SystemController::endPlay()
+bool SystemController::EndPlay()
 {
-	if (CashReserve < CASINO_BROKE_CASH)
+	if (cashReserve < CASINO_BROKE_CASH)
 		return true;
 
-	if (getActivePlayers() < MIN_PLAYERS)
+	if (!MinPlayersRequirement())
 		return true;
 
 	return false;
@@ -214,23 +284,28 @@ void SystemController::StartSimulation()
 	cout << endl << "Simulation has started!" << endl;
 
 	// loop till end of player list, end of casino money, or not enough players
+	int round = 1;
 	while (true)
 	{
+		cout << "ROUND: " << round++ << " ----------------" << endl;
+		statModule->IncrementRound();
+
 		// game setup
-		populateTables();
+		PopulateTables();
 
 		// game
-		playRoundOnAllTables();
+		PlayRoundOnAllTables();
 
 		// cleanup
-		refillTables();
-		retireDealers();
-		quitPlayers();
-		retrieveAllPlayers();
+		RefillTables();
+		RetireDealers();
+		RetirePlayers();
+		RetrieveAllPlayers();
 
 		// end play
-		if (endPlay())
+		if (EndPlay() || round > MAX_ROUNDS)
 			break;
+		
 	}
 
 	EndSimulation();
@@ -241,5 +316,11 @@ void SystemController::EndSimulation()
 {
 	// end the simulation
 	cout << endl << "Simulation has ended!" << endl;
+
+	statModule->SetHallOfFamers((int)hallOfFame.size());
+	statModule->SetQuitters((int)quitPlayers.size());
+
+	statModule->PrintStats();
+	statModule->PrintStatsToFile();
 }
 

@@ -5,34 +5,40 @@
 
 
 GameTable::GameTable(int in_ID, int in_minPlayers, int in_maxPlayers, int in_minDecks, int in_maxDecks, int in_StartRatio, int in_refillRatio, int in_PromotionThreshold)
-	: TableID(in_ID), minPlayers(in_minPlayers), maxPlayers(in_maxPlayers), minDecks(in_minDecks), maxDecks(in_maxDecks), startRatio(in_StartRatio), refillRatio(in_refillRatio), PromotionThreshold(in_PromotionThreshold)
+	: tableID(in_ID), tableMinPlayers(in_minPlayers), tableMaxPlayers(in_maxPlayers), tableMinDecks(in_minDecks), tableMaxDecks(in_maxDecks), cashStartRatio(in_StartRatio), cashRefillRatio(in_refillRatio), playerPromotionThreshold(in_PromotionThreshold)
 {
-	Level = Red;
+	tableLevel = Red;
 
 	minBet = -1;
 	maxBet = -1;
 	betMultiple = -1;
 
-	TableStartCash = -1;
-	TableCurrentCash = -1;
-	TableRefillAmount = -1;
+	tableStartCash = -1;
+	tableCurrentCash = -1;
+	tableRefillAmount = -1;
 
-	TableDealer = nullptr;
-	TableDeck = new Deck((rand() % (maxDecks - minDecks + 1)) + minDecks);
+	tableAssignedDealer = nullptr;
+	tableCardsDeck = new Deck((rand() % (tableMaxDecks - tableMinDecks + 1)) + tableMinDecks);
+
+	outfile.open(ROUND_OUTPUT_FILE);
 }
 
 
 GameTable::~GameTable()
 {
-	delete TableDeck;
+	if (tableAssignedDealer)
+		delete tableAssignedDealer;
+
+	delete tableCardsDeck;
+	outfile.close();
 }
 
 
 bool GameTable::AssignDealer(Dealer* in_dealer)
 {
-	if (TableDealer == nullptr)
+	if (tableAssignedDealer == nullptr)
 	{
-		TableDealer = in_dealer;
+		tableAssignedDealer = in_dealer;
 		return true;
 	}
 	return false;
@@ -41,8 +47,8 @@ bool GameTable::AssignDealer(Dealer* in_dealer)
 
 bool GameTable::DealerNeedsToRetire()
 {
-	if(TableDealer)
-		return TableDealer->QuittingBehaviour();
+	if(tableAssignedDealer)
+		return tableAssignedDealer->QuittingBehaviour();
 
 	return false;
 }
@@ -50,18 +56,18 @@ bool GameTable::DealerNeedsToRetire()
 
 Dealer* GameTable::RemoveDealer()
 {
-	Dealer* retiredDealer = TableDealer;
-	TableDealer = nullptr;
-	retiredDealer->clearGameTable();
+	Dealer* retiredDealer = tableAssignedDealer;
+	tableAssignedDealer = nullptr;
+	retiredDealer->ClearAssignedGameTable();
 	return retiredDealer;
 }
 
 
 bool GameTable::AddPlayer(Player* in_player)
 {
-	if (TablePlayers.size() < maxPlayers)
+	if (tableAssignedPlayers.size() < tableMaxPlayers)
 	{
-		TablePlayers.push_back(in_player);
+		tableAssignedPlayers.push_back(in_player);
 		return true;
 	}
 	return false;
@@ -70,13 +76,13 @@ bool GameTable::AddPlayer(Player* in_player)
 
 bool GameTable::GameReadyToStart()
 {
-	if (TableDealer == nullptr)
+	if (tableAssignedDealer == nullptr)
 		return false;
 
-	if (TablePlayers.size() < minPlayers)
+	if (tableAssignedPlayers.size() < tableMinPlayers)
 		return false;
 
-	if (TableCurrentCash <= TableRefillAmount)
+	if (tableCurrentCash <= tableRefillAmount)
 		return false;
 
 	return true;
@@ -85,7 +91,7 @@ bool GameTable::GameReadyToStart()
 
 bool GameTable::CanTakeMorePlayer()
 {
-	if (TablePlayers.size() < maxPlayers)
+	if (tableAssignedPlayers.size() < tableMaxPlayers)
 		return true;
 	
 	return false;
@@ -94,55 +100,64 @@ bool GameTable::CanTakeMorePlayer()
 
 bool GameTable::CanTakeADealer()
 {
-	if (TableDealer == nullptr)
+	if (tableAssignedDealer == nullptr)
 		return true;
 
 	return false;
 }
 
 
-void GameTable::PlayRound()
+void GameTable::PlayRound(StatKeeper* statModule)
 {
 	if (GameReadyToStart())
 	{
+		cout << endl << "Table" << tableID << " of level " << (tableLevel + 1) << " started round:" << endl;
+
+		outfile << endl << "Table" << tableID << " of level " << (tableLevel + 1) << " started round:" << endl;
+
 		BettingRound();
 
 		DealingRound();
 
 		PlayingRound();
 
-		ResultsRound();
+		ResultsRound(statModule);
 
 		PlayerPromotions();
+
+		CleanUp();
+
+		cout << "Table" << tableID << ": ended round" << endl << endl;
+		outfile << "Table" << tableID << ": ended round" << endl << endl;
 	}
 }
 
 
-bool GameTable::needCashRefill()
+bool GameTable::NeedCashRefill()
 {
-	if (TableCurrentCash <= TableRefillAmount)
+	if (tableCurrentCash <= tableRefillAmount)
 		return true;
 	else
 		return false;
 }
 
 
-int GameTable::topUpAmount()
+int GameTable::TopUpAmount()
 {
-	return TableStartCash - TableCurrentCash;
+	return tableStartCash - tableCurrentCash;
 }
 
 
-void GameTable::depositCash(int amount)
+void GameTable::DepositCash(int amount)
 {
-	TableCurrentCash += amount;
+	tableCurrentCash += amount;
 }
 
 
 void GameTable::BettingRound()
 {
 	// betting round
-	for (auto& p : TablePlayers)
+	for (auto& p : tableAssignedPlayers)
 	{
 		p->Bet();
 	}
@@ -152,18 +167,18 @@ void GameTable::BettingRound()
 void GameTable::DealingRound()
 {
 	// deal cards for player
-	for (auto& p : TablePlayers)
+	for (auto& p : tableAssignedPlayers)
 	{
 		for (int i = 0; i < 2; i++)
 		{
-			p->addCard(TableDeck->dealCard());
+			p->AddCard(tableCardsDeck->DealOneCard());
 		}
 	}
 
 	// deal cards for dealer
 	for (int i = 0; i < 2; i++)
 	{
-		TableDealer->addCard(TableDeck->dealCard());
+		tableAssignedDealer->AddCard(tableCardsDeck->DealOneCard());
 	}
 }
 
@@ -171,52 +186,148 @@ void GameTable::DealingRound()
 void GameTable::PlayingRound()
 {
 	// players' turn
-	for (auto& p : TablePlayers)
+	for (auto& p : tableAssignedPlayers)
 	{
 		while (p->Play(p->GetHandscore()));
 	}
 
 	// dealer's turn
-	while (TableDealer->Play(TableDealer->GetHandscore()));
+	while (tableAssignedDealer->Play(tableAssignedDealer->GetHandscore()));
 }
 
 
-void GameTable::ResultsRound()
+void GameTable::ResultsRound(StatKeeper* statModule)
 {
+	// print results
+	PrintHands();
+
 	// calculate winner and losers
-	int dealerScore = TableDealer->GetHandscore();
-	for (auto& p : TablePlayers)
+	int dealerScore = tableAssignedDealer->GetHandscore();
+
+	for (auto& player : tableAssignedPlayers)
 	{
-		int playerScore = p->GetHandscore();
+		int playerScore = player->GetHandscore();
 		
-		if (playerScore > 21)
+		if (playerScore > 21 && dealerScore > 21)
 		{
-			p->Lose();
-			TableCurrentCash += p->getBetAmount();
+			PlayerDrawLogistics(statModule, player);
 		}
-		else if (playerScore < dealerScore && dealerScore < 21)
+		else if (playerScore == dealerScore)
 		{
-			p->Lose();
-			TableCurrentCash += p->getBetAmount();
+			PlayerDrawLogistics(statModule, player);
+		}
+		else if (playerScore > 21)
+		{
+			PlayerLoseLogistics(statModule, player);		
+		}
+		else if (playerScore < dealerScore && dealerScore <= 21)
+		{
+			PlayerLoseLogistics(statModule, player);			
 		}
 		else
 		{
-			p->Win();
-			TableCurrentCash -= p->getWinAmount();
+			PlayerWinLogistics(statModule, player);			
 		}
 	}
+
+	cout << endl;
+	outfile << endl;
+
 }
+
+
+void GameTable::PrintHands()
+{
+	cout << "Dealer: " << tableAssignedDealer->GetPlayHandAsString();
+	cout << "\t\tSum: " << tableAssignedDealer->GetHandscore() << endl;
+
+	outfile << "Dealer: " << tableAssignedDealer->GetPlayHandAsString();
+	outfile << "\t\tSum: " << tableAssignedDealer->GetHandscore() << endl;
+
+	for (auto& player : tableAssignedPlayers)
+	{
+		cout << "Player" << player->PlayerID() << ": " << player->GetPlayHandAsString();
+		cout << "\t\tSum: " << player->GetHandscore() << "\t\t" << "Bet Amount: " << player->GetBetAmount() << endl;
+
+		outfile << "Player" << player->PlayerID() << ": " << player->GetPlayHandAsString();
+		outfile << "\t\tSum: " << player->GetHandscore() << "\t\t" << "Bet Amount: " << player->GetBetAmount() << endl;
+	}
+
+	cout << endl;
+	outfile << endl;
+}
+
+
+void GameTable::PlayerLoseLogistics(StatKeeper* statModule, Player* player)
+{
+	player->Lose();
+
+	tableCurrentCash += player->GetBetAmount();
+	statModule->AddPlayerLoseAmount(player->GetBetAmount());
+
+	// output to console
+	cout << "Player" << player->PlayerID() << ": loses " << player->GetBetAmount() << ".\t\tBalance: " << player->GetCurrentCash() << endl;
+
+	// output to file
+	outfile << "Player" << player->PlayerID() << ": loses " << player->GetBetAmount() << ".\t\tBalance: " << player->GetCurrentCash() << endl;
+}
+
+
+void GameTable::PlayerWinLogistics(StatKeeper* statModule, Player* player)
+{
+	player->Win();
+
+	tableCurrentCash -= player->GetWinAmount();
+	statModule->AddPlayerWinAmount(player->GetWinAmount());
+
+	// output to console
+	cout << "Player" << player->PlayerID() << ": wins " << player->GetWinAmount() << "!\t\tBalance: " << player->GetCurrentCash() << endl;
+
+	// output to file
+	outfile << "Player" << player->PlayerID() << ": wins " << player->GetWinAmount() << "!\t\tBalance: " << player->GetCurrentCash() << endl;
+}
+
+
+void GameTable::PlayerDrawLogistics(StatKeeper* statModule, Player* player)
+{
+	player->Draw();
+
+	// output to console
+	cout << "Player" << player->PlayerID() << ": draws.\t\tBalance: " << player->GetCurrentCash() << endl;
+
+	// output to file
+	outfile << "Player" << player->PlayerID() << ": draws.\t\tBalance: " << player->GetCurrentCash() << endl;
+}
+
+
 
 
 void GameTable::PlayerPromotions()
 {
-	for (auto& player : TablePlayers)
+	for (auto& player : tableAssignedPlayers)
 	{
-		if (player->PlayerProfitLoss() >= PromotionThreshold)
+		if (player->PlayerProfitLoss() >= playerPromotionThreshold)
 		{
 			player->PromotePlayer();
+
+			cout << "NOTICE: Player" << player->PlayerID() << " promoted to higher table!" << endl;
+			outfile << "NOTICE: Player" << player->PlayerID() << " promoted to higher table!" << endl;
 		}
 	}
+}
+
+
+void GameTable::CleanUp()
+{
+	tableAssignedDealer->ResetPlayHand();
+
+	for (auto& player : tableAssignedPlayers)
+	{
+		player->ResetPlayHand();
+	}
+
+	delete tableCardsDeck;
+	tableCardsDeck = new Deck((rand() % (tableMaxDecks - tableMinDecks + 1)) + tableMinDecks);
 }
 
 
@@ -231,6 +342,6 @@ int GameTable::PlaceBet()
 
 Card GameTable::HitMe()
 {
-	return TableDeck->dealCard();
+	return tableCardsDeck->DealOneCard();
 }
 

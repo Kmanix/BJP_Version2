@@ -40,4 +40,3 @@ public:
 };
 
 #endif /* STRATEGY_PLAYER_H */
-

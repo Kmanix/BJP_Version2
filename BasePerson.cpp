@@ -5,15 +5,12 @@
 
 BasePerson::BasePerson(int in_ID)
 {
-	ID = in_ID;
-	TableNumber = -1;
+	personID = in_ID;
+	tableNumber = -1;
 	assignedTable = nullptr;
 
-	RoundLimit = ROUND_LIMIT;
-	RoundsPlayed = 0;
-
-	StartCash = 0;
-	CurrentCash = 0;
+	roundLimit = ROUND_LIMIT;
+	roundsPlayed = 0;
 
 }
 
@@ -30,7 +27,7 @@ bool BasePerson::Play(int Handscore)
 		if (Strategy(Handscore))
 		{
 			// person decided to hit
-			hand.push_back(assignedTable->HitMe());
+			playHand.push_back(assignedTable->HitMe());
 			return true;
 		}
 		else
@@ -45,49 +42,56 @@ bool BasePerson::Play(int Handscore)
 
 void BasePerson::Win()
 {
-	TrackRecord.push_back('W');
-	RoundsPlayed++;
+	trackRecord.push_back('W');
+	roundsPlayed++;
 }
 
 
 void BasePerson::Lose()
 {
-	TrackRecord.push_back('L');
-	RoundsPlayed++;
+	trackRecord.push_back('L');
+	roundsPlayed++;
 }
 
 
-GameTable* BasePerson::getGameTable()
+void BasePerson::Draw()
+{
+	trackRecord.push_back('D');
+	roundsPlayed++;
+}
+
+
+GameTable* BasePerson::GetAssignedGameTable()
 {
 	return assignedTable;
 }
 
 
-void BasePerson::setGameTable(GameTable* in_table)
+void BasePerson::SetAssignedGameTable(GameTable* in_table)
 {
 	if (in_table != nullptr)
 		assignedTable = in_table;
 }
 
 
-void BasePerson::clearGameTable()
+void BasePerson::ClearAssignedGameTable()
 {
 	assignedTable = nullptr;
 }
 
 
-void BasePerson::addCard(Card c)
+void BasePerson::AddCard(Card c)
 {
-	hand.push_back(c);
+	playHand.push_back(c);
 }
 
 
 int BasePerson::GetHandscore()
 {
 	int hs = 0;
-	for (auto& c : hand)
+	for (auto& c : playHand)
 	{
-		int rank = c.getRank();
+		int rank = c.GetRank();
 		if (rank >= 2 && rank <= 10) // for non-ace cards
 		{
 			hs += rank;
@@ -108,15 +112,31 @@ int BasePerson::GetHandscore()
 }
 
 
-void BasePerson::resetHand()
+void BasePerson::ResetPlayHand()
 {
-	hand.clear();
+	playHand.clear();
 }
 
 
-int BasePerson::ProfitLoss()
+string BasePerson::GetPlayHandAsString()
 {
-	return StartCash - CurrentCash;
+	string handStr = "";
+	for (auto& c : playHand)
+	{
+		switch (c.GetSuit())
+		{
+			case Hearts: handStr += "H";
+				break;
+			case Diamonds: handStr += "D";
+				break;
+			case Clubs: handStr += "C";
+				break;
+			case Spades: handStr += "S";
+				break;
+		}
+		handStr += to_string(c.GetRank());
+		handStr += ", ";
+	}
+	return handStr;
 }
-
 

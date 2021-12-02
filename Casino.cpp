@@ -3,61 +3,55 @@
 
 Casino::Casino()
 {
-	CashReserve = CASINO_CASH; // numeric separator c++ 14 onwards
+	cashReserve = CASINO_CASH;
+	casinoStartCash = cashReserve;
 
-	TraffGen = new TrafficGen(InitialPlayerBase, DealerBase, Tables);
-	SK = new StatKeeper();
-	SysCon = new SystemController(CashReserve, TraffGen, InitialPlayerBase, DealerBase, Tables, QuitPlayers, HallOfFame);
+	trafficGenModule = new TrafficGen(initialPlayerBase, dealerBase, casinoTables);
+	statModule = new StatKeeper();
+	sysCon = new SystemController(cashReserve, trafficGenModule, statModule, initialPlayerBase, dealerBase, casinoTables, quitPlayers, hallOfFame);
 }
 
 
 Casino::~Casino()
 {
 	// delete casino components
-	delete TraffGen;
-	delete SK;
-	delete SysCon;
+	delete trafficGenModule;
+	delete statModule;
+	delete sysCon;
 
 	// delete player objects
-	for (int i = 0; i < InitialPlayerBase.size(); i++)
+	for (int i = 0; i < initialPlayerBase.size(); i++)
 	{
-		delete InitialPlayerBase[i];
+		delete initialPlayerBase[i];
 	}
-	InitialPlayerBase.clear();
+	initialPlayerBase.clear();
 
 	// delete dealer objects
-	for (int i = 0; i < DealerBase.size(); i++)
+	for (int i = 0; i < dealerBase.size(); i++)
 	{
-		delete DealerBase[i];
+		delete dealerBase[i];
 	}
-	DealerBase.clear();
+	dealerBase.clear();
 
 	// delete table objects
-	for (int i = 0; i < Tables.size(); i++)
+	for (int i = 0; i < casinoTables.size(); i++)
 	{
-		delete Tables[i];
+		delete casinoTables[i];
 	}
-	Tables.clear();
-
-	// delete player objects
-	for (int i = 0; i < InitialPlayerBase.size(); i++)
-	{
-		delete InitialPlayerBase[i];
-	}
-	InitialPlayerBase.clear();
+	casinoTables.clear();
 
 	// delete Quit Players objects
-	for (int i = 0; i < QuitPlayers.size(); i++)
+	for (int i = 0; i < quitPlayers.size(); i++)
 	{
-		delete QuitPlayers[i];
+		delete quitPlayers[i];
 	}
-	QuitPlayers.clear();
+	quitPlayers.clear();
 
 	// delete Hall Of Fame objects
-	for (int i = 0; i < HallOfFame.size(); i++)
+	for (int i = 0; i < hallOfFame.size(); i++)
 	{
-		delete HallOfFame[i];
+		delete hallOfFame[i];
 	}
-	HallOfFame.clear();
+	hallOfFame.clear();
 }
 

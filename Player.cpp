@@ -6,37 +6,42 @@
 Player::Player(int in_ID, int in_Level)
 	: BasePerson(in_ID)
 {
-	Level = in_Level;
+	hasQuit = false;
+
+	startCash = -1;
+	currentCash = -1;
+
+	playerLevel = in_Level;
 	betAmount = 0;
 	winAmount = 0;
 
-	switch (Level)
+	switch (playerLevel)
 	{
-		case 0: StartCash = 2 * (rand() % (RED_MAX_BET - RED_MIN_BET)) + RED_MIN_BET;
+		case L1: startCash = 2 * (rand() % (RED_MAX_BET - RED_MIN_BET)) + RED_MIN_BET;
 			break;
-		case 1: StartCash = 2 * (rand() % (GREEN_MAX_BET - GREEN_MIN_BET)) + GREEN_MIN_BET;
+		case L2: startCash = 2 * (rand() % (GREEN_MAX_BET - GREEN_MIN_BET)) + GREEN_MIN_BET;
 			break;
-		case 2: StartCash = 2 * (rand() % (BLACK_MAX_BET - BLACK_MIN_BET)) + BLACK_MIN_BET;
+		case L3: startCash = 2 * (rand() % (BLACK_MAX_BET - BLACK_MIN_BET)) + BLACK_MIN_BET;
 			break;
-		case 3: StartCash = 2 * (rand() % (BLUE_MAX_BET - BLUE_MIN_BET)) + BLUE_MIN_BET;
+		case L4: startCash = 2 * (rand() % (BLUE_MAX_BET - BLUE_MIN_BET)) + BLUE_MIN_BET;
 			break;
 	}
 
-	CurrentCash = StartCash;
+	currentCash = startCash;
 }
 
 
 int Player::Bet()
 {
 	betAmount = assignedTable->PlaceBet();
-	if (betAmount > CurrentCash)
+	if (betAmount > currentCash)
 	{
-		betAmount = CurrentCash;
-		CurrentCash = 0;
+		betAmount = currentCash;
+		currentCash = 0;
 	}
 	else
 	{
-		CurrentCash -= betAmount;
+		currentCash -= betAmount;
 	}
 	return betAmount;
 }
@@ -44,10 +49,10 @@ int Player::Bet()
 
 bool Player::QuittingBehaviour()
 {
-	if (CurrentCash <= 0)
+	if (currentCash <= 0)
 		return true;
 
-	switch (Level)
+	switch (playerLevel)
 	{
 		case 0: return RedLevelQuit();
 				break;
@@ -65,7 +70,7 @@ bool Player::QuittingBehaviour()
 bool Player::RedLevelQuit()
 {
 	int wins = 0, losses = 0;
-	for (char& c : TrackRecord)
+	for (char& c : trackRecord)
 	{
 		if (c == 'W')
 			wins++;
@@ -75,9 +80,9 @@ bool Player::RedLevelQuit()
 
 	double quitLimit = 60.0f; // 60% loss rate
 
-	if (TrackRecord.size() > 1)
+	if (trackRecord.size() > 1)
 	{
-		double lose_percent = (double)losses / TrackRecord.size() * 100.0;
+		double lose_percent = (double)losses / trackRecord.size() * 100.0;
 
 		if (lose_percent >= quitLimit)
 			return true;
@@ -89,7 +94,7 @@ bool Player::RedLevelQuit()
 
 bool Player::GreenLevelQuit()
 {
-	if (CurrentCash <= (int)((double)StartCash * 0.1))
+	if (currentCash <= (int)((double)startCash * 0.1))
 		return true;
 	else
 		return false;
@@ -98,7 +103,7 @@ bool Player::GreenLevelQuit()
 
 bool Player::BlackLevelQuit()
 {
-	if (RoundsPlayed >= RoundLimit)
+	if (roundsPlayed >= roundLimit)
 		return true;
 	else
 		return false;
@@ -107,12 +112,12 @@ bool Player::BlackLevelQuit()
 
 bool Player::BlueLevelQuit()
 {
-	if (TrackRecord.size() > 2)
+	if (trackRecord.size() > 2)
 	{
-		int lastIndex = (int)TrackRecord.size() - 1;
-		if (TrackRecord[lastIndex] == 'L' &&
-			TrackRecord[lastIndex - 1] == 'L' &&
-			TrackRecord[lastIndex - 2] == 'L')
+		int lastIndex = (int)trackRecord.size() - 1;
+		if (trackRecord[lastIndex] == 'L' &&
+			trackRecord[lastIndex - 1] == 'L' &&
+			trackRecord[lastIndex - 2] == 'L')
 		{
 			return true;
 		}
@@ -125,7 +130,7 @@ void Player::Win()
 {
 	BasePerson::Win();
 
-	if (hand.size() == 2 && GetHandscore() == 21)
+	if (playHand.size() == 2 && GetHandscore() == 21)
 	{
 		winAmount = (betAmount + (int)((double)betAmount * 1.5));
 	}
@@ -134,7 +139,7 @@ void Player::Win()
 		winAmount = (betAmount + betAmount);
 	}
 
-	CurrentCash += winAmount;
+	currentCash += winAmount;
 }
 
 
@@ -144,17 +149,31 @@ void Player::Lose()
 }
 
 
+void Player::Draw()
+{
+	BasePerson::Draw();
+
+	winAmount = betAmount;
+	currentCash += winAmount;
+}
+
+
 int Player::PlayerProfitLoss()
 {
-	return CurrentCash - StartCash;
+	return currentCash - startCash;
 }
 
 
 void Player::PromotePlayer()
 {
-	if (Level < L5)
+	if (playerLevel < L5)
 	{
-		Level++;
+		playerLevel++;
 	}
+}
+
+int Player::ProfitLoss()
+{
+	return startCash - currentCash;
 }
 

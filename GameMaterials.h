@@ -29,8 +29,8 @@ private:
 
 public:
 	Card(int in_rank, char in_suit);
-	int getRank();
-	char getSuit();
+	int GetRank();
+	char GetSuit();
 };
 
 
@@ -39,15 +39,14 @@ class Deck
 {
 private:
 	vector<Card> CardDeck;
-	void addDeck();
-
+	
 public:
 	Deck(int quantity);
-	Card dealCard();
+	Card DealOneCard();
 	int DeckSize();
 	void DeckShuffle();
+	void AddOneDeck();
 };
 
 
 #endif /* GAME_MATERIALS_H */
-
