@@ -7,8 +7,11 @@ Casino::Casino()
 	casinoStartCash = cashReserve;
 
 	trafficGenModule = new TrafficGen(initialPlayerBase, dealerBase, casinoTables);
+	
 	statModule = new StatKeeper();
-	sysCon = new SystemController(cashReserve, trafficGenModule, statModule, initialPlayerBase, dealerBase, casinoTables, quitPlayers, hallOfFame);
+	
+	sysCon = new SystemController(cashReserve, trafficGenModule,
+		statModule, initialPlayerBase, dealerBase, casinoTables, quitPlayers, hallOfFame);
 }
 
 
@@ -54,4 +57,3 @@ Casino::~Casino()
 	}
 	hallOfFame.clear();
 }
-

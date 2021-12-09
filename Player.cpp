@@ -17,14 +17,14 @@ Player::Player(int in_ID, int in_Level)
 
 	switch (playerLevel)
 	{
-		case L1: startCash = 2 * (rand() % (RED_MAX_BET - RED_MIN_BET)) + RED_MIN_BET;
-			break;
-		case L2: startCash = 2 * (rand() % (GREEN_MAX_BET - GREEN_MIN_BET)) + GREEN_MIN_BET;
-			break;
-		case L3: startCash = 2 * (rand() % (BLACK_MAX_BET - BLACK_MIN_BET)) + BLACK_MIN_BET;
-			break;
-		case L4: startCash = 2 * (rand() % (BLUE_MAX_BET - BLUE_MIN_BET)) + BLUE_MIN_BET;
-			break;
+	case L1: startCash = 2 * (rand() % (RED_MAX_BET - RED_MIN_BET)) + RED_MIN_BET;
+		break;
+	case L2: startCash = 2 * (rand() % (GREEN_MAX_BET - GREEN_MIN_BET)) + GREEN_MIN_BET;
+		break;
+	case L3: startCash = 2 * (rand() % (BLACK_MAX_BET - BLACK_MIN_BET)) + BLACK_MIN_BET;
+		break;
+	case L4: startCash = 2 * (rand() % (BLUE_MAX_BET - BLUE_MIN_BET)) + BLUE_MIN_BET;
+		break;
 	}
 
 	currentCash = startCash;
@@ -54,14 +54,14 @@ bool Player::QuittingBehaviour()
 
 	switch (playerLevel)
 	{
-		case 0: return RedLevelQuit();
-				break;
-		case 1: return GreenLevelQuit();
-				break;
-		case 2: return BlackLevelQuit();
-				break;
-		case 3: return BlueLevelQuit();
-				break;
+	case 0: return RedLevelQuit();
+		break;
+	case 1: return GreenLevelQuit();
+		break;
+	case 2: return BlackLevelQuit();
+		break;
+	case 3: return BlueLevelQuit();
+		break;
 	}
 	return false;
 }
@@ -176,4 +176,3 @@ int Player::ProfitLoss()
 {
 	return startCash - currentCash;
 }
-

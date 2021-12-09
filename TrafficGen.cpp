@@ -10,7 +10,7 @@ TrafficGen::TrafficGen(vector<Player*>& pb, vector<Dealer*>& db, vector<GameTabl
 	maxNumPlayer = 0;
 	minNumDeck = 0;
 	maxNumDeck = 0;
-	
+
 	numDealers = 0;
 	dealerSalary = 0;
 	dealerWinThreshold = 0;
@@ -164,14 +164,14 @@ void TrafficGen::CreatePlayerBase()
 
 		switch (chosenStrat)
 		{
-			case Random: InitialPlayerBase.push_back(new RandomPlayer(i, chosenLevel));
-						break;
-			case Mimic: InitialPlayerBase.push_back(new MimicPlayer(i, chosenLevel));
-						break;
-			case Safe:InitialPlayerBase.push_back(new SafePlayer(i, chosenLevel));
-						break;
-			case Custom:InitialPlayerBase.push_back(new CustomPlayer(i, chosenLevel));
-						break;
+		case Random: InitialPlayerBase.push_back(new RandomPlayer(i, chosenLevel));
+			break;
+		case Mimic: InitialPlayerBase.push_back(new MimicPlayer(i, chosenLevel));
+			break;
+		case Safe:InitialPlayerBase.push_back(new SafePlayer(i, chosenLevel));
+			break;
+		case Custom:InitialPlayerBase.push_back(new CustomPlayer(i, chosenLevel));
+			break;
 		} // end of switch
 
 	}// end of for loop
@@ -196,28 +196,31 @@ void TrafficGen::CreateTables()
 	{
 		if (tokens > 0)
 		{
-			Tables.push_back(new RedTable((numTables-tokens), minNumPlayer, maxNumPlayer, minNumDeck, maxNumDeck, tableStartAmountRatio, tableRefillAmountRatio, transitionThreshold[L1]));
+			Tables.push_back(new RedTable((numTables - tokens), minNumPlayer, maxNumPlayer, minNumDeck,
+				maxNumDeck, tableStartAmountRatio, tableRefillAmountRatio, transitionThreshold[L1]));
 			tokens--;
 		}
 
 		if (tokens > 0)
 		{
-			Tables.push_back(new GreenTable((numTables - tokens), minNumPlayer, maxNumPlayer, minNumDeck, maxNumDeck, tableStartAmountRatio, tableRefillAmountRatio, transitionThreshold[L2]));
+			Tables.push_back(new GreenTable((numTables - tokens), minNumPlayer, maxNumPlayer, minNumDeck,
+				maxNumDeck, tableStartAmountRatio, tableRefillAmountRatio, transitionThreshold[L2]));
 			tokens--;
 		}
 
 		if (tokens > 0)
 		{
-			Tables.push_back(new BlackTable((numTables - tokens), minNumPlayer, maxNumPlayer, minNumDeck, maxNumDeck, tableStartAmountRatio, tableRefillAmountRatio, transitionThreshold[L3]));
+			Tables.push_back(new BlackTable((numTables - tokens), minNumPlayer, maxNumPlayer, minNumDeck,
+				maxNumDeck, tableStartAmountRatio, tableRefillAmountRatio, transitionThreshold[L3]));
 			tokens--;
 		}
 
 		if (tokens > 0)
 		{
-			Tables.push_back(new BlueTable((numTables - tokens), minNumPlayer, maxNumPlayer, minNumDeck, maxNumDeck, tableStartAmountRatio, tableRefillAmountRatio, transitionThreshold[L4]));
+			Tables.push_back(new BlueTable((numTables - tokens), minNumPlayer, maxNumPlayer, minNumDeck,
+				maxNumDeck, tableStartAmountRatio, tableRefillAmountRatio, transitionThreshold[L4]));
 			tokens--;
 		}
 	}
 }
-
 

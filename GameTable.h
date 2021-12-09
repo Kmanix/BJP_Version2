@@ -65,7 +65,9 @@ protected:
 	void CleanUp();
 
 public:
-	GameTable(int in_ID, int in_minPlayers, int in_maxPlayers, int in_minDecks, int in_maxDecks, int startRatio, int refillRatio, int PromotionThreshold);
+	GameTable(int in_ID, int in_minPlayers, int in_maxPlayers, int in_minDecks, 
+		int in_maxDecks, int startRatio, int refillRatio, int PromotionThreshold);
+	
 	~GameTable();
 
 	bool AssignDealer(Dealer* in_dealer);
@@ -91,9 +93,7 @@ public:
 	void DepositCash(int amount);
 
 	int GetCurrentCash() { return tableCurrentCash; }
-
 };
 
 
 #endif /* GAME_TABLE_H */
-

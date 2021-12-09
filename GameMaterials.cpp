@@ -82,4 +82,3 @@ void Deck::AddOneDeck()
 	CardDeck.push_back(Card(1, Clubs));
 	CardDeck.push_back(Card(1, Spades));
 }
-

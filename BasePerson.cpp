@@ -125,18 +125,17 @@ string BasePerson::GetPlayHandAsString()
 	{
 		switch (c.GetSuit())
 		{
-			case Hearts: handStr += "H";
-				break;
-			case Diamonds: handStr += "D";
-				break;
-			case Clubs: handStr += "C";
-				break;
-			case Spades: handStr += "S";
-				break;
+		case Hearts: handStr += "H";
+			break;
+		case Diamonds: handStr += "D";
+			break;
+		case Clubs: handStr += "C";
+			break;
+		case Spades: handStr += "S";
+			break;
 		}
 		handStr += to_string(c.GetRank());
 		handStr += ", ";
 	}
 	return handStr;
 }
-

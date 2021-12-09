@@ -44,7 +44,9 @@ class SystemController
 	bool EndPlay();
 
 public:
-	SystemController(long int& CashReserve, TrafficGen* TrafficGen, StatKeeper* statModule, vector<Player*>& PlayerBase, vector<Dealer*>& Dealerbase, vector<GameTable*>& TableBase, vector<Player*> QuitPlayers, vector<Player*> HallOfFame);
+	SystemController(long int& CashReserve, TrafficGen* TrafficGen, StatKeeper* statModule,
+		vector<Player*>& PlayerBase, vector<Dealer*>& Dealerbase, vector<GameTable*>& TableBase,
+		vector<Player*> QuitPlayers, vector<Player*> HallOfFame);
 	~SystemController();
 
 	void Init();

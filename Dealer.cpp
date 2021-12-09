@@ -12,7 +12,7 @@ Dealer::Dealer(int in_ID, int in_sal, int in_thres) : BasePerson(in_ID)
 }
 
 
-// dealer bet handled in game table class
+
 int Dealer::Bet()
 {
 	return 0;
@@ -64,6 +64,5 @@ void Dealer::UpdateSalary()
 
 double Dealer::GetSalary()
 {
-	return dealerSalary; 
+	return dealerSalary;
 }
-

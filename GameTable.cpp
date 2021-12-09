@@ -4,8 +4,10 @@
 #include "Dealer.h"
 
 
-GameTable::GameTable(int in_ID, int in_minPlayers, int in_maxPlayers, int in_minDecks, int in_maxDecks, int in_StartRatio, int in_refillRatio, int in_PromotionThreshold)
-	: tableID(in_ID), tableMinPlayers(in_minPlayers), tableMaxPlayers(in_maxPlayers), tableMinDecks(in_minDecks), tableMaxDecks(in_maxDecks), cashStartRatio(in_StartRatio), cashRefillRatio(in_refillRatio), playerPromotionThreshold(in_PromotionThreshold)
+GameTable::GameTable(int in_ID, int in_minPlayers, int in_maxPlayers, int in_minDecks,
+	int in_maxDecks, int in_StartRatio, int in_refillRatio, int in_PromotionThreshold)
+	: tableID(in_ID), tableMinPlayers(in_minPlayers), tableMaxPlayers(in_maxPlayers), tableMinDecks(in_minDecks), tableMaxDecks(in_maxDecks),
+	cashStartRatio(in_StartRatio), cashRefillRatio(in_refillRatio), playerPromotionThreshold(in_PromotionThreshold)
 {
 	tableLevel = Red;
 
@@ -47,7 +49,7 @@ bool GameTable::AssignDealer(Dealer* in_dealer)
 
 bool GameTable::DealerNeedsToRetire()
 {
-	if(tableAssignedDealer)
+	if (tableAssignedDealer)
 		return tableAssignedDealer->QuittingBehaviour();
 
 	return false;
@@ -93,7 +95,7 @@ bool GameTable::CanTakeMorePlayer()
 {
 	if (tableAssignedPlayers.size() < tableMaxPlayers)
 		return true;
-	
+
 	return false;
 }
 
@@ -207,7 +209,7 @@ void GameTable::ResultsRound(StatKeeper* statModule)
 	for (auto& player : tableAssignedPlayers)
 	{
 		int playerScore = player->GetHandscore();
-		
+
 		if (playerScore > 21 && dealerScore > 21)
 		{
 			PlayerDrawLogistics(statModule, player);
@@ -218,21 +220,20 @@ void GameTable::ResultsRound(StatKeeper* statModule)
 		}
 		else if (playerScore > 21)
 		{
-			PlayerLoseLogistics(statModule, player);		
+			PlayerLoseLogistics(statModule, player);
 		}
 		else if (playerScore < dealerScore && dealerScore <= 21)
 		{
-			PlayerLoseLogistics(statModule, player);			
+			PlayerLoseLogistics(statModule, player);
 		}
 		else
 		{
-			PlayerWinLogistics(statModule, player);			
+			PlayerWinLogistics(statModule, player);
 		}
 	}
 
 	cout << endl;
 	outfile << endl;
-
 }
 
 
@@ -344,4 +345,3 @@ Card GameTable::HitMe()
 {
 	return tableCardsDeck->DealOneCard();
 }
-

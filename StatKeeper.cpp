@@ -88,4 +88,3 @@ void StatKeeper::PrintStatsToFile()
 	}
 	outfile.close();
 }
-

@@ -39,7 +39,7 @@ class Deck
 {
 private:
 	vector<Card> CardDeck;
-	
+
 public:
 	Deck(int quantity);
 	Card DealOneCard();

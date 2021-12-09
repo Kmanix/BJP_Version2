@@ -13,7 +13,7 @@ private:
 	int lossThreshold;
 
 public:
-	Dealer(int ID, int salaryRate, int winThreshol);
+	Dealer(int ID, int salaryRate, int lossThreshold);
 
 	int Bet() override;
 	bool QuittingBehaviour() override;
